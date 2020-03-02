@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'icon_content.dart';
-import 'reusable_card.dart';
-import 'constants.dart';
+import '../components/icon_content.dart';
+import '../components/reusable_card.dart';
+import '../constants.dart';
+import 'results_page.dart';
+import '../components/bottom_button.dart';
+import '../components/round_icon_button.dart';
+import 'package:bmi_calculator/calculator_brain.dart';
 
 enum Gender {
   male,
@@ -86,6 +90,9 @@ class _InputPageState extends State<InputPage> {
                         height.toString(),
                         //선언해준 height 변수는 값으로 int 180을 가지기에 텍스트 위젯에서는 문자열로 변환해줘야한다.
                         style: KNumberTextStyle,
+                      ),
+                      SizedBox(
+                        width: 5.0,
                       ),
                       Text(
                         'cm',
@@ -213,37 +220,29 @@ class _InputPageState extends State<InputPage> {
               ],
             ),
           ),
-          Container(
-            color: KBottomContainerColour,
-            margin: EdgeInsets.only(top: 10.0),
-            width: double.infinity,
-            height: KBottomContainerHeight,
+          BottomButton(
+            onTap: () {
+              CalculatorBrain calc = CalculatorBrain(
+                //객체생성
+                height: height,
+                weight: weight,
+              );
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ResultsPage(
+                    bmiResult: calc.calculateBMI(),
+                    resultText: calc.getResult(),
+                    interpretation: calc.getInterpretation(),
+                  ),
+                ),
+              );
+            },
+            buttonTitle: 'CALCULATOR',
           ),
         ],
       ),
-    );
-  }
-}
-
-class RoundIconButton extends StatelessWidget {
-  final IconData icon; //속성 지정
-  final Function onPressed;
-
-  RoundIconButton({@required this.icon, @required this.onPressed}); //생성자로 초기화
-
-  @override
-  Widget build(BuildContext context) {
-    return RawMaterialButton(
-      child: Icon(icon), // - 버튼과 +버튼 2개가 있으니 이건 속성을 따로 뺴줘야함
-      onPressed: onPressed,
-      elevation: 0.0, //그림자
-      constraints: BoxConstraints.tightFor(
-        //버튼크기
-        width: 56.0,
-        height: 56.0,
-      ),
-      shape: CircleBorder(), //버튼 모양
-      fillColor: Color(0xFF4C4F5E), //버튼 색상
     );
   }
 }
